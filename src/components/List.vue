@@ -229,14 +229,11 @@ export default {
   padding: 16px;
 }
 .event:hover {
-  transform-style: preserve-3d;
-  transform: translateY(1px) translateZ(-1em);
-  transform: translateY(-1px);
   box-shadow: 2px 4px 8px #445;
 }
 .event:active {
   transform-style: preserve-3d;
-  transform: translateY(1px) translateZ(-1em);
+  transform: translateY(2px) translateZ(-1em);
   box-shadow: 2px 3px 7px #334;
 }
 .event {
@@ -245,6 +242,7 @@ export default {
 .focused {
   transition: width 0.5s;
   width: 100%;
+  cursor: auto;
 }
 .unfocused {
   transition: width 0.5s;
@@ -280,11 +278,30 @@ export default {
   display: block;
   font-size: 16px;
   font-weight: bold;
-  line-height: 1.5em;
+  line-height: 20px;
   margin-bottom: 4px;
 }
 .name {
   padding-bottom: 4px;
+}
+.focused .location {
+  padding-right: 100px;
+}
+.type {
+  margin-bottom: 8px;
+}
+.close-button {
+  cursor: pointer;
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  color: white;
+  border: solid 1px #556;
+  border-radius: 50%;
+  padding: 4px;
+  width: 30px;
+  height: 30px;
 }
 .list-item {
   transition: all 0.5s;
