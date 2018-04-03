@@ -1,7 +1,7 @@
 <template>
 <div>
   <div v-if="event.date && !focused" class="date">{{date}}</div>
-  <div :class="`event ${focused ? 'focused' : 'unfocused'}`" @click="handleClick">
+  <div :class="`event ${focused ? 'focused' : 'unfocused'}`" @click="handleFocus">
     <div v-if="event.tournamentname" class="name">{{event.tournamentname}}</div>
     <div v-if="event.location" class="location">{{event.location}}</div>
     <span v-if="focused">
@@ -11,6 +11,11 @@
         <a class="event-link" target="_blank" :href="event.link">More info</a>
       </div>
       <div v-if="date" class="date focused-event-info">{{date}}</div>
+      <button @click="handleUnfocus" class="close-button">
+        <svg class="close-tag" viewBox="0 0 52 52">
+          <path stroke-width="6" stroke="currentcolor" d="M16 16 36 36 M36 16 16 36" />
+        </svg>
+      </button>
     </span>
   </div>
 </div>
@@ -41,15 +46,17 @@ export default {
     },
   },
   methods: {
-    handleClick() {
-      if (this.focused) {
-        this.unfocus();
-      }
-      if (this.focus) {
+    handleFocus() {
+      if (!this.focused) {
         this.focus(this.event.index);
       }
     },
-  },
+    handleUnfocus() {
+      if (this.focused) {
+        this.unfocus();
+      }
+    }
+  }
 };
 </script>
 
