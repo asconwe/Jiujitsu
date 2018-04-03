@@ -26,24 +26,24 @@ export default {
   props: {
     event: {
       type: Object,
-      required: true
+      required: true,
     },
     focus: {
-      type: Function
+      type: Function,
     },
     unfocus: {
-      type: Function
+      type: Function,
     },
     focused: {
-      type: Boolean
-    }
+      type: Boolean,
+    },
   },
   computed: {
     date() {
       const date = new Date(this.event.date);
       return `${date.getUTCMonth() +
         1}.${date.getDate()}.${date.getFullYear()}`;
-    }
+    },
   },
   methods: {
     handleFocus() {

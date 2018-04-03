@@ -12,31 +12,31 @@
 </template>
 
 <script>
-import StyledTagInput from "./StyledTagInput";
-import FilterRow from "./FilterRow";
-import TagList from "./TagList";
-import states from "../assets/states";
+import StyledTagInput from './StyledTagInput';
+import FilterRow from './FilterRow';
+import TagList from './TagList';
+import states from '../assets/states';
 
 export default {
   props: {
     onTagUpdate: {
       type: Function,
-      required: false
+      required: false,
     },
     caption: {
-      default: "States",
-      type: String
-    }
+      default: 'States',
+      type: String,
+    },
   },
   components: {
     StyledTagInput,
     FilterRow,
-    TagList
+    TagList,
   },
   data() {
     return {
       allTags: [],
-      states
+      states,
     };
   },
   methods: {
@@ -44,7 +44,7 @@ export default {
       const foundState = states.find(
         state =>
           state.abbr === val.toUpperCase() ||
-          state.full.toUpperCase() === val.toUpperCase()
+          state.full.toUpperCase() === val.toUpperCase(),
       );
       if (
         foundState &&
@@ -58,15 +58,15 @@ export default {
     handleDelete(index) {
       this.allTags = [
         ...this.allTags.slice(0, index),
-        ...this.allTags.slice(index + 1)
+        ...this.allTags.slice(index + 1),
       ];
       this.onTagUpdate(this.allTags);
     },
     handleTagAdd(tags) {
       this.allTags = tags;
       this.onTagUpdate(this.allTags);
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -82,6 +82,14 @@ export default {
   border-top: solid 1px #334;
   line-height: 0;
   padding: 0 50px 0 0;
+}
+
+@supports (-webkit-overflow-scrolling: touch) {
+  /* CSS specific to iOS devices */
+  .filter-input .tag-input-group {
+    bottom: auto;
+    top: 80px;
+  }
 }
 
 .filter-input .tag-input-group button {
@@ -115,6 +123,7 @@ export default {
   padding-left: 4px;
   border: none;
   animation-name: flash-yellow;
+  font-size: 16px;
   animation-duration: 1.5s;
   animation-delay: 0.1s;
   -webkit-animation-name: flash-yellow;
