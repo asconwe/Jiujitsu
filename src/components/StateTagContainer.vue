@@ -12,31 +12,31 @@
 </template>
 
 <script>
-import StyledTagInput from './StyledTagInput';
-import FilterRow from './FilterRow';
-import TagList from './TagList';
-import states from '../assets/states';
+import StyledTagInput from "./StyledTagInput";
+import FilterRow from "./FilterRow";
+import TagList from "./TagList";
+import states from "../assets/states";
 
 export default {
   props: {
     onTagUpdate: {
       type: Function,
-      required: false,
+      required: false
     },
     caption: {
-      default: 'States',
-      type: String,
-    },
+      default: "States",
+      type: String
+    }
   },
   components: {
     StyledTagInput,
     FilterRow,
-    TagList,
+    TagList
   },
   data() {
     return {
       allTags: [],
-      states,
+      states
     };
   },
   methods: {
@@ -44,7 +44,7 @@ export default {
       const foundState = states.find(
         state =>
           state.abbr === val.toUpperCase() ||
-          state.full.toUpperCase() === val.toUpperCase(),
+          state.full.toUpperCase() === val.toUpperCase()
       );
       if (
         foundState &&
@@ -58,15 +58,15 @@ export default {
     handleDelete(index) {
       this.allTags = [
         ...this.allTags.slice(0, index),
-        ...this.allTags.slice(index + 1),
+        ...this.allTags.slice(index + 1)
       ];
       this.onTagUpdate(this.allTags);
     },
     handleTagAdd(tags) {
       this.allTags = tags;
       this.onTagUpdate(this.allTags);
-    },
-  },
+    }
+  }
 };
 </script>
 
@@ -82,7 +82,6 @@ export default {
   border-top: solid 1px #334;
   line-height: 0;
   padding: 0 50px 0 0;
-  text-transform: uppercase;
 }
 
 .filter-input .tag-input-group button {
@@ -94,7 +93,7 @@ export default {
   background: #334;
 }
 
-@keyframes flash {
+@keyframes flash-yellow {
   from {
     background: yellow;
   }
@@ -102,14 +101,25 @@ export default {
     background: white;
   }
 }
+@-webkit-keyframes flash-yellow {
+  from {
+    -webkit-background: yellow;
+  }
+  to {
+    -webkit-background: white;
+  }
+}
 .filter-input .tag-input-group input {
   width: 100%;
   height: 100%;
   padding-left: 4px;
   border: none;
-  animation-name: flash;
+  animation-name: flash-yellow;
   animation-duration: 1.5s;
   animation-delay: 0.1s;
+  -webkit-animation-name: flash-yellow;
+  -webkit-animation-duration: 1.5s;
+  -webkit-animation-delay: 0.1s;
 }
 
 @media only screen and (min-width: 600px) {
