@@ -1,39 +1,27 @@
 <template>
-  <div class="t-group">
+  <div :class="`t-group ${this.direction}`">
     <AnimatedIcon />
     <transition-group  name="list">
-      <EventRow
-        v-if="eventsEmpty"
+      <RowItem
         class="list-item"
-        :event="{location: `No events for the dates and locations you\'ve specified.`}"
-        key="emppty" />
-      <EventRow
-        v-else-if="focused"
-        :unfocus="unsetFocusedEvent"
-        :focused="focused"
-        class="list-item"
-        v-for="event in sortedEvents"
-        :event="event"
-        :key="`${event.tournamentname}${event.location}${event.date}`" />
-      <EventRow
-        v-else class="list-item"
-        v-for="event in sortedEvents"
-        :focus="setFocusedEvent"
-        :event="event"
-        :key="`${event.tournamentname}${event.location}${event.date}`" />
+        v-for="row in composedRows"
+        :row="row"
+        :key="row.key"
+        @click="handleRowClick(row.key)" />
     </transition-group>
   </div>
 </template>
 
 <script>
-import EventRow from './EventRow';
-import sort from '../assets/sideEffectFreeSort';
-import AnimatedIcon from './AnimatedIcon';
+import RowItem from "./RowItem";
+import sort from "../assets/sideEffectFreeSort";
+import AnimatedIcon from "./AnimatedIcon";
 
 export default {
   components: {
-    EventRow,
-    AnimatedIcon,
+    RowItem,
+    AnimatedIcon
+
   },
   props: {
     events: {
@@ -42,7 +30,7 @@ export default {
     },
     itemsPerPage: {
       type: Number,
-      default: 15,
+      default: 5
     },
     paginationIndex: {
       type: Number,
@@ -90,8 +78,19 @@ export default {
       type: Number,
     },
     focused: {
-      type: Boolean,
+      type: Boolean
     },
+    nextPage: {
+      type: Function
+    },
+    previousPage: {
+      type: Function
+    }
+  },
+  data() {
+    return {
+      direction: "left"
+    };
   },
   computed: {
     eventsEmpty() {
@@ -99,8 +98,12 @@ export default {
     },
     filteredEvents() {
       if (this.focusedEventIndex) {
+        console.log("computing::", this.focusedEventIndex);
         return [
-          this.events.find(event => event.index === this.focusedEventIndex),
+          {
+            ...this.events.find(event => event.key === this.focusedEventIndex),
+            focused: true
+          }
         ];
       }
       const nameFilteredEvents = this.filterByName(this.events);
@@ -112,7 +115,6 @@ export default {
       return dateFilteredEvents;
     },
     sortedEvents() {
-      // by price for  now
       const sortMethods = {
         price(sortedVal, unsortedVal) {
           return (
@@ -140,8 +142,48 @@ export default {
 
       return sort(this.filteredEvents, sortMethods[this.sortBy]);
     },
+    paginatedEvents() {
+      return this.filterByPagination(this.sortedEvents);
+    },
+    composedRows() {
+      //insert ad somewhere in here
+
+      // if empty
+      if (this.paginatedEvents.length === 0) {
+        return [{ type: "empty", key: "empty" }];
+      }
+      // not empty
+      // if not on first page
+      if (this.sortedEvents.length > this.itemsPerPage) {
+        // and not on last page
+        if (this.paginationIndex > 0) {
+          // and not on last page
+          if (
+            this.paginationIndex <
+            Math.floor(this.sortedEvents.length / this.itemsPerPage)
+          ) {
+            return [
+              { type: "previous", key: "previous" },
+              ...this.paginatedEvents,
+              { type: "next", key: "next" }
+            ];
+          }
+          // on last page
+          return [
+            { type: "previous", key: "previous" },
+            ...this.paginatedEvents
+          ];
+        }
+        // on first page
+        return [...this.paginatedEvents, { type: "next", key: "next" }];
+      }
+      return [...this.paginatedEvents];
+    }
   },
   methods: {
+    test() {
+      this.direction = "tap";
+    },
     filterByName(events) {
       if (this.filterName.length > 0) {
         return events.filter(event =>
@@ -201,120 +243,58 @@ export default {
       return events;
     },
     filterByPagination(events) {
-      return events.slice(
-        this.paginationIndex * this.itemsPerPage,
-        (this.paginationIndex + 1) * this.itemsPerPage,
-      );
+      if (events.length >= this.itemsPerPage) {
+        return events.slice(
+          this.paginationIndex * this.itemsPerPage,
+          (this.paginationIndex + 1) * this.itemsPerPage
+        );
+      }
+      return events;
     },
-  },
+    handleRowClick(key) {
+      if (!isNaN(parseInt(key, 10))) {
+        const index = parseInt(key, 10);
+        if (this.focusedEventIndex !== index) {
+          return this.setFocusedEvent(index);
+        }
+        return this.unsetFocusedEvent(index);
+      }
+      if (key === "next") {
+        this.direction = "left";
+        return this.nextPage();
+      }
+      if (key === "previous") {
+        this.direction = "right";
+        return this.previousPage();
+      }
+    }
+  }
 };
 </script>
 
 <style>
-.event {
-  z-index: 1;
-  margin-bottom: 15px;
-  margin-right: 0;
-  margin-left: auto;
-  width: 70%;
-  border-radius: 3px;
-  box-shadow: 2px 3px 8px #445;
-  transition: box-shadow 0.1s;
-  background: #334;
-  color: #cdd;
-  font-size: 14px;
-  font-weight: light;
-  text-align: left;
-  cursor: pointer;
-  padding: 16px;
-}
-.event:hover {
-  box-shadow: 2px 4px 8px #445;
-}
-.event:active {
-  transform-style: preserve-3d;
-  transform: translateY(2px) translateZ(-1em);
-  box-shadow: 2px 3px 7px #334;
-}
-.event {
-  position: relative;
-}
-.focused {
-  transition: width 0.5s;
-  width: 100%;
-  cursor: auto;
-}
-.unfocused {
-  transition: width 0.5s;
-}
-.date.focused-event-info {
-  position: absolute;
-  bottom: 16px;
-  right: 16px;
-  margin-bottom: 0;
-  font-size: 20px;
-}
-.focused-event-info {
-  font-size: 16px;
-  line-height: 20px;
-  margin-bottom: 4px;
-}
-.link.focused-event-info {
-  border: solid 1px white;
-  width: 100px;
-  text-align: center;
-  padding: 4px;
-  margin-bottom: 0;
-}
-.event-link {
-  color: white;
-  text-decoration: none;
-}
-.date {
-  float: left;
-  padding-top: 16px;
-}
-.location {
-  display: block;
-  font-size: 16px;
-  font-weight: bold;
-  line-height: 20px;
-  margin-bottom: 4px;
-}
-.name {
-  padding-bottom: 4px;
-}
-.focused .location {
-  padding-right: 100px;
-}
-.type {
-  margin-bottom: 8px;
-}
-.close-button {
-  cursor: pointer;
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  background: none;
-  color: white;
-  border: solid 1px #556;
-  border-radius: 50%;
-  padding: 4px;
-  width: 30px;
-  height: 30px;
-}
 .list-item {
   transition: all 0.5s;
   display: inline-block;
   width: 100%;
 }
-.list-enter {
+.left-list-leave-to,
+.right .list-enter {
   opacity: 0;
   transform: translateX(-800px);
 }
-.list-leave-to {
+.left .list-enter,
+.right .list-leave-to {
   opacity: 0;
   transform: translateX(800px);
+}
+.list-enter {
+  opacity: 0;
+  transform: translateX(800px);
+}
+.list-leave-to {
+  opacity: 0;
+  transform: translateX(-800px);
 }
 .list-leave-active {
   position: absolute;
