@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" ref="app">
     <Header
       :animating="animating"
       :ignore-scroll="ignoreScroll"
@@ -15,9 +15,13 @@
     <div class="list-container">
       <List
         :events="events"
-        :setFocusedEvent="setFocusedEvent"
-        :unsetFocusedEvent="unsetFocusedEvent"
-        :focusedEventIndex="focusedEventIndex"
+        :pagination-index="paginationIndex"
+        :items-per-page="10"
+        :next-page="nextPage"
+        :previous-page="previousPage"
+        :set-focused-event="setFocusedEvent"
+        :unset-focused-event="unsetFocusedEvent"
+        :focused-event-index="focusedEventIndex"
         :focused="focused"
         :filter-state="filterState"
         :filter-date="filterDate"
@@ -45,7 +49,8 @@ export default {
   },
   data() {
     return {
-      events: events.map((event, index) => ({ ...event, index })),
+      events: events.map((event, index) => ({ ...event, key: index })),
+      paginationIndex: 0,
       sortBy: 'date',
       dateRange: [new Date()],
       filterState: [],
@@ -54,16 +59,38 @@ export default {
       animating: false,
       focusedEventIndex: undefined,
       focused: false,
+      scrollTop: 0,
+      scrollToInterval: undefined,
     };
   },
+  beforeDestroy() {
+    clearInterval(this.scrollToInterval);
+  },
   methods: {
-    setFocusedEvent(index) {
-      this.focusedEventIndex = index;
-      this.focused = true;
+    nextPage() {
+      this.paginationIndex += 1;
     },
-    unsetFocusedEvent() {
+    previousPage() {
+      this.paginationIndex -= 1;
+    },
+    setFocusedEvent(index) {
+      this.scrollTop = this.$refs.app.scrollTop;
+      this.focusedEventIndex = index;
+    },
+    unsetFocusedEvent(index) {
       this.focusedEventIndex = null;
-      this.focused = false;
+      this.scrollApp(200);
+    },
+    scrollApp(duration) {
+      const startPosition = this.$refs.app.scrollTop;
+      const endPosition = this.scrollTop;
+      const increment = (endPosition - startPosition) / (duration / 5);
+      this.scrollToInterval = setInterval(() => {
+        this.$refs.app.scrollTop += increment;
+        if (this.$refs.app.scrollTop >= this.scrollTop) {
+          clearInterval(this.scrollToInterval);
+        }
+      }, 5);
     },
     openHeader() {
       this.headerIsOpen = true;
@@ -80,9 +107,11 @@ export default {
     },
     handleDateRangeUpdate(range) {
       this.filterDate = range;
+      this.paginationIndex = 0;
     },
     handleStateTagUpdate(arr) {
       this.filterState = arr;
+      this.paginationIndex = 0;
     },
     ignoreScroll() {
       this.animating = true;
