@@ -1,6 +1,8 @@
 <template>
     <form @submit.prevent="handleSubmit" class="date-form">
-      <p class="range text-start">Start</p>
+      <p class="range text-start">
+        Start
+      </p>
       <input
         class="date-input range start"
         type="date"
@@ -88,6 +90,7 @@ export default {
 </script>
 
 <style scoped>
+
 .text-start {
   vertical-align: top;
 }
@@ -114,11 +117,13 @@ input.date-input {
   height: 30px;
   background: none;
   border: solid 1px white;
+  border-radius: 0px;
   color: white;
   font-family: "Roboto", sans-serif;
   font-weight: lighter;
   font-size: 14px;
   line-height: 16px;
+  margin: 0;
 }
 .start,
 .text-end {

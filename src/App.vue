@@ -161,4 +161,11 @@ body, html {
   padding-top: 10px;
   padding-bottom: 10px;
 }
+@supports (-webkit-overflow-scrolling: touch) {
+  /* CSS specific to iOS devices */
+  * {
+      cursor: pointer;
+  }
+}
+
 </style>

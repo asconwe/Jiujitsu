@@ -21,11 +21,12 @@ export default {
   components: {
     RowItem,
     AnimatedIcon
+
   },
   props: {
     events: {
       type: Array,
-      required: true
+      required: true,
     },
     itemsPerPage: {
       type: Number,
@@ -33,48 +34,48 @@ export default {
     },
     paginationIndex: {
       type: Number,
-      default: 0
+      default: 0,
     },
     sortBy: {
       type: String,
-      default: "date"
+      default: 'date',
     },
     filterName: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
     filterDate: {
       type: Array,
-      default: () => [new Date()]
+      default: () => [new Date()],
     },
     filterState: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
     filterLocation: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
     filterPrice: {
       type: Object,
       default: () => ({
         low: 80,
         high: 100,
-        active: false
-      })
+        active: false,
+      }),
     },
     filterType: {
       type: Array,
-      default: () => []
+      default: () => [],
     },
     setFocusedEvent: {
-      type: Function
+      type: Function,
     },
     unsetFocusedEvent: {
-      type: Function
+      type: Function,
     },
     focusedEventIndex: {
-      type: Number
+      type: Number,
     },
     focused: {
       type: Boolean
@@ -136,7 +137,7 @@ export default {
           const sortedDate = new Date(sortedVal.date);
           const unsortedDate = new Date(unsortedVal.date);
           return unsortedDate.getTime() - sortedDate.getTime();
-        }
+        },
       };
 
       return sort(this.filteredEvents, sortMethods[this.sortBy]);
@@ -186,7 +187,7 @@ export default {
     filterByName(events) {
       if (this.filterName.length > 0) {
         return events.filter(event =>
-          this.filterName.includes(event.tournamentname)
+          this.filterName.includes(event.tournamentname),
         );
       }
       return events;
@@ -200,7 +201,7 @@ export default {
     filterByLocation(events) {
       if (this.filterLocation.length > 0) {
         return events.filter(event =>
-          this.filterLocation.includes(event.location)
+          this.filterLocation.includes(event.location),
         );
       }
       return events;
@@ -216,7 +217,7 @@ export default {
         return events.filter(
           event =>
             event.price > this.filterPrice.low &&
-            event.price < this.filterPrice.high
+            event.price < this.filterPrice.high,
         );
       }
       return events;
@@ -224,7 +225,7 @@ export default {
     filterByDate(events) {
       if (this.filterDate.length === 1) {
         const filterTime = this.filterDate[0].getTime();
-        return events.filter(event => {
+        return events.filter((event) => {
           const eventDate = new Date(event.date);
           return eventDate.getTime() > filterTime;
         });
@@ -232,8 +233,8 @@ export default {
       if (this.filterDate.length === 2) {
         const filterTimeStart = this.filterDate[0].getTime();
         const filterTimeEnd =
-          this.filterDate[1].getTime() + 1000 * 60 * 60 * 24;
-        return events.filter(event => {
+          this.filterDate[1].getTime() + (1000 * 60 * 60 * 24);
+        return events.filter((event) => {
           const eventDate = new Date(event.date);
           const eventTime = eventDate.getTime();
           return eventTime > filterTimeStart && eventTime < filterTimeEnd;
