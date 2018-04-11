@@ -11,9 +11,9 @@ export default {
     row: {
       type: Object,
       required: true,
-      valiator: ({ val }) => val.type === "next" || val.type === "previous"
-    }
-  }
+      valiator: ({ val }) => val.type === 'next' || val.type === 'previous',
+    },
+  },
 };
 </script>
 

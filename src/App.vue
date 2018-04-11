@@ -37,6 +37,7 @@ import StateTagContainer from './components/StateTagContainer';
 import DateRangeContainer from './components/DateRangeContainer';
 import Header from './components/Header';
 import events from './data';
+import db from './database/database';
 
 export default {
   name: 'App',
@@ -61,7 +62,15 @@ export default {
       focused: false,
       scrollTop: 0,
       scrollToInterval: undefined,
+      db,
     };
+  },
+  mounted() {
+    this.db.transaction('rw', 'events', async () => {
+      this.events.forEach((event) => {
+        this.db.events.add(event);
+      });
+    });
   },
   beforeDestroy() {
     clearInterval(this.scrollToInterval);
@@ -77,20 +86,20 @@ export default {
       this.scrollTop = this.$refs.app.scrollTop;
       this.focusedEventIndex = index;
     },
-    unsetFocusedEvent(index) {
+    unsetFocusedEvent() {
       this.focusedEventIndex = null;
       this.scrollApp(200);
     },
     scrollApp(duration) {
       const startPosition = this.$refs.app.scrollTop;
       const endPosition = this.scrollTop;
-      const increment = (endPosition - startPosition) / (duration / 5);
+      const increment = (endPosition - startPosition) / (duration / 2);
       this.scrollToInterval = setInterval(() => {
         this.$refs.app.scrollTop += increment;
         if (this.$refs.app.scrollTop >= this.scrollTop) {
           clearInterval(this.scrollToInterval);
         }
-      }, 5);
+      }, 2);
     },
     openHeader() {
       this.headerIsOpen = true;

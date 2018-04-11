@@ -13,14 +13,14 @@
 </template>
 
 <script>
-import RowItem from "./RowItem";
-import sort from "../assets/sideEffectFreeSort";
-import AnimatedIcon from "./AnimatedIcon";
+import RowItem from './RowItem';
+import sort from '../assets/sideEffectFreeSort';
+import AnimatedIcon from './AnimatedIcon';
 
 export default {
   components: {
     RowItem,
-    AnimatedIcon
+    AnimatedIcon,
 
   },
   props: {
@@ -30,7 +30,7 @@ export default {
     },
     itemsPerPage: {
       type: Number,
-      default: 5
+      default: 5,
     },
     paginationIndex: {
       type: Number,
@@ -78,18 +78,18 @@ export default {
       type: Number,
     },
     focused: {
-      type: Boolean
+      type: Boolean,
     },
     nextPage: {
-      type: Function
+      type: Function,
     },
     previousPage: {
-      type: Function
-    }
+      type: Function,
+    },
   },
   data() {
     return {
-      direction: "left"
+      direction: 'left',
     };
   },
   computed: {
@@ -98,12 +98,11 @@ export default {
     },
     filteredEvents() {
       if (this.focusedEventIndex) {
-        console.log("computing::", this.focusedEventIndex);
         return [
           {
             ...this.events.find(event => event.key === this.focusedEventIndex),
-            focused: true
-          }
+            focused: true,
+          },
         ];
       }
       const nameFilteredEvents = this.filterByName(this.events);
@@ -146,11 +145,11 @@ export default {
       return this.filterByPagination(this.sortedEvents);
     },
     composedRows() {
-      //insert ad somewhere in here
+      // insert ad somewhere in here
 
       // if empty
       if (this.paginatedEvents.length === 0) {
-        return [{ type: "empty", key: "empty" }];
+        return [{ type: 'empty', key: 'empty' }];
       }
       // not empty
       // if not on first page
@@ -163,26 +162,26 @@ export default {
             Math.floor(this.sortedEvents.length / this.itemsPerPage)
           ) {
             return [
-              { type: "previous", key: "previous" },
+              { type: 'previous', key: 'previous' },
               ...this.paginatedEvents,
-              { type: "next", key: "next" }
+              { type: 'next', key: 'next' },
             ];
           }
           // on last page
           return [
-            { type: "previous", key: "previous" },
-            ...this.paginatedEvents
+            { type: 'previous', key: 'previous' },
+            ...this.paginatedEvents,
           ];
         }
         // on first page
-        return [...this.paginatedEvents, { type: "next", key: "next" }];
+        return [...this.paginatedEvents, { type: 'next', key: 'next' }];
       }
       return [...this.paginatedEvents];
-    }
+    },
   },
   methods: {
     test() {
-      this.direction = "tap";
+      this.direction = 'tap';
     },
     filterByName(events) {
       if (this.filterName.length > 0) {
@@ -246,7 +245,7 @@ export default {
       if (events.length >= this.itemsPerPage) {
         return events.slice(
           this.paginationIndex * this.itemsPerPage,
-          (this.paginationIndex + 1) * this.itemsPerPage
+          (this.paginationIndex + 1) * this.itemsPerPage,
         );
       }
       return events;
@@ -259,16 +258,17 @@ export default {
         }
         return this.unsetFocusedEvent(index);
       }
-      if (key === "next") {
-        this.direction = "left";
+      if (key === 'next') {
+        this.direction = 'left';
         return this.nextPage();
       }
-      if (key === "previous") {
-        this.direction = "right";
+      if (key === 'previous') {
+        this.direction = 'right';
         return this.previousPage();
       }
-    }
-  }
+      return null;
+    },
+  },
 };
 </script>
 

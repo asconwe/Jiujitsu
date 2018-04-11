@@ -27,23 +27,23 @@
 export default {
   props: {
     onRangeEdit: {
-      type: Function
+      type: Function,
     },
     dateRange: {
       type: Array,
-      validator: arr => {
+      validator: (arr) => {
         const filtArr = arr.filter(val => val instanceof Date);
         return arr.length < 3 && filtArr.length === arr.length;
       },
-      default: () => [new Date()]
-    }
+      default: () => [new Date()],
+    },
   },
   data() {
     return {
       today: new Date(),
-      localStart: "",
-      localEnd: "",
-      showRangeEnd: false
+      localStart: '',
+      localEnd: '',
+      showRangeEnd: false,
     };
   },
   computed: {
@@ -54,7 +54,7 @@ export default {
       return this.localEnd || this.dateRange[1]
         ? this.localEnd || this.dateRange[1].toJSON().slice(0, 10)
         : this.start;
-    }
+    },
   },
   methods: {
     handleSubmit() {
@@ -84,8 +84,8 @@ export default {
     },
     handleAfterEnter() {
       if (this.$refs.rangeEnd) this.$refs.rangeEnd.click();
-    }
-  }
+    },
+  },
 };
 </script>
 

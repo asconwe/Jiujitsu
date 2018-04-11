@@ -5,8 +5,7 @@
   "main": "src/main.js",
   "private": true,
   "scripts": {
-    "dev":
-      "webpack-dev-server --inline --progress --host 0.0.0.0 --config build/webpack.dev.conf.js",
+    "dev": "webpack-dev-server --inline --progress --host 0.0.0.0 --config build/webpack.dev.conf.js",
     "start": "npm run dev",
     "unit": "jest --config test/unit/jest.conf.js --coverage",
     "test": "npm run unit",
@@ -14,9 +13,15 @@
     "build": "node build/build.js"
   },
   "dependencies": {
+    "aws-sdk": "^2.224.1",
     "babel-polyfill": "6.26.0",
-    "rxdb": "7.4.3",
+    "body-parser": "^1.18.2",
+    "dexie": "^2.0.2",
+    "dotenv": "^5.0.1",
+    "dynamoose": "^0.8.7",
+    "express": "^4.16.3",
     "rxjs": "5.5.8",
+    "uuid": "^3.2.1",
     "vue": "^2.5.2",
     "vue-touch": "2.0.0-beta.4"
   },
@@ -75,6 +80,10 @@
     "node": ">= 6.0.0",
     "npm": ">= 3.0.0"
   },
-  "browserslist": ["> 1%", "last 2 versions", "not ie <= 8"],
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 8"
+  ],
   "keywords": []
 }

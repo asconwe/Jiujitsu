@@ -51,16 +51,15 @@ export default {
   methods: {
     handleClickOfUnfocused() {
       if (!this.row.focused) {
-        this.$emit("click");
+        this.$emit('click');
       }
     },
     handleClickOfUnfocusButton() {
-      console.log(this.row.focused);
       if (this.row.focused) {
-        this.$emit("click");
+        this.$emit('click');
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
