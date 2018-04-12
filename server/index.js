@@ -11,6 +11,7 @@ if (process.env.NODE_ENV !== 'production') {
   });
 
   dynamoose.local();
+  // eslint-disable-next-line global-require
   require('./repopulate')();
 }
 
