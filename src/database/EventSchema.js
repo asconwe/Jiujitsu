@@ -8,11 +8,14 @@ export default {
       type: 'string',
       primary: true,
     },
-    name: {
+    tournamentname: {
       type: 'string',
     },
     date: {
       type: 'date',
+    },
+    city: {
+      type: 'string',
     },
     price: {
       type: 'string',
@@ -24,6 +27,9 @@ export default {
       type: 'string',
     },
     link: {
+      type: 'string',
+    },
+    type: {
       type: 'string',
     },
   },

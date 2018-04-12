@@ -9,8 +9,10 @@ const changeSchema = new Schema({
     type: String,
     required: true,
   },
-}, {
-  timestamps: true,
+  createdAt: {
+    type: Number,
+    required: true,
+  },
 });
 
 module.exports = changeSchema;
