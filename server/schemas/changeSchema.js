@@ -5,7 +5,7 @@ const changeSchema = new Schema({
     type: String,
     hashKey: true,
   },
-  event_id: {
+  eventId: {
     type: String,
     required: true,
   },

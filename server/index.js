@@ -24,7 +24,6 @@ const update = require('./controllers/update');
 const getAll = require('./controllers/getAll');
 const getAllWhere = require('./controllers/getAllWhere');
 
-
 app.get('/api/events', (req, res) => {
   getAll(Event)
     .then(events => res.status(200).send(events))
@@ -40,8 +39,8 @@ app.get('/api/events/:id', (req, res) => {
 app.post('/api/events/', (req, res) => {
   const eventData = req.body;
   return insert(eventData, Event)
-    .then(event_id => insert({ event_id, createdAt: Date.now() }, Change))
-    .then(change_id => res.status(200).json({ change_id }))
+    .then(eventId => insert({ eventId, createdAt: Date.now() }, Change))
+    .then(changeId => res.status(200).json({ changeId }))
     .catch(err => res.status(400).json({ success: false, error: err }));
 });
 
@@ -49,22 +48,22 @@ app.put('/api/events/:id', (req, res) => {
   const id = req.params.id;
   const eventData = req.body;
   return update(id, eventData, Event)
-    .then(event_id => insert({ event_id, createdAt: Date.now() }, Change))
-    .then(change_id => res.status(200).json({ change_id }))
+    .then(eventId => insert({ eventId, createdAt: Date.now() }, Change))
+    .then(changeId => res.status(200).json({ changeId }))
     .catch(err => res.status(400).json({ success: false, error: err }));
 });
 
 app.delete('/api/events/:id', (req, res) => {
   const id = req.params.id;
   return update(id, { deleted: true })
-    .then(event_id => insert({ event_id, createdAt: Date.now() }, Change))
-    .then(change_id => res.status(200).json({ change_id }))
+    .then(eventId => insert({ eventId, createdAt: Date.now() }, Change))
+    .then(changeId => res.status(200).json({ changeId }))
     .catch(err => res.status(400).json({ success: false, error: err }));
 });
 
 app.get('/api/changes/:last_updated_at?', (req, res) => {
   const getChanges = () => {
-    if (req.params.last_updated_at) {
+    if (!isNaN(parseInt(req.params.last_updated_at, 10))) {
       return getAllWhere(Change, { createdAt: { gt: parseInt(req.params.last_updated_at, 10) } });
     }
     return getAll(Change);
@@ -72,7 +71,7 @@ app.get('/api/changes/:last_updated_at?', (req, res) => {
 
   return getChanges()
     .then(changes => Promise.all(changes.map(change => change.populate({
-      path: 'event_id',
+      path: 'eventId',
       model: 'Event',
     }))))
     .then((populatedChanges) => {
