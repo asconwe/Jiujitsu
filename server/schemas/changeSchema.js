@@ -10,6 +10,7 @@ const changeSchema = new Schema({
     required: true,
   },
   createdAt: {
+    rangeKey: true,
     type: Number,
     required: true,
   },

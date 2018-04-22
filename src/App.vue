@@ -93,7 +93,7 @@ export default {
     scrollApp(duration) {
       const startPosition = this.$refs.app.scrollTop;
       const endPosition = this.scrollTop;
-      const increment = (endPosition - startPosition) / (duration / 2);
+      const increment = (endPosition - startPosition) / (duration / 5);
       this.scrollToInterval = setInterval(() => {
         this.$refs.app.scrollTop += increment;
         if (this.$refs.app.scrollTop >= this.scrollTop) {

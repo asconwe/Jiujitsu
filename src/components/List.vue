@@ -1,7 +1,7 @@
 <template>
   <div :class="`t-group ${this.direction}`">
     <AnimatedIcon />
-    <transition-group  name="list">
+    <transition-group name="list">
       <RowItem
         class="list-item"
         v-for="row in composedRows"
@@ -180,9 +180,6 @@ export default {
     },
   },
   methods: {
-    test() {
-      this.direction = 'tap';
-    },
     filterByName(events) {
       if (this.filterName.length > 0) {
         return events.filter(event =>
@@ -278,26 +275,27 @@ export default {
   display: inline-block;
   width: 100%;
 }
-.left-list-leave-to,
-.right .list-enter {
+.right .list-enter,
+.left .list-leave-to {
   opacity: 0;
-  transform: translateX(-800px);
+  transform: translateX(-200px);
 }
 .left .list-enter,
 .right .list-leave-to {
   opacity: 0;
   transform: translateX(800px);
 }
-.list-enter {
-  opacity: 0;
-  transform: translateX(800px);
+.right .list-enter-active,
+.left .list-enter-active {
+  transition: all 1s;
 }
-.list-leave-to {
-  opacity: 0;
-  transform: translateX(-800px);
-}
-.list-leave-active {
+.right .list-leave-active {
+  transform: translateX(300px);
   position: absolute;
+},
+.left .list-leave-active {
+  position: absolute;
+  transform: translateX(300px);
 }
 
 .t-group span {

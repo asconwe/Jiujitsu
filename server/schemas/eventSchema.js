@@ -29,4 +29,21 @@ const eventSchema = new Schema({
   },
 });
 
+/* -------------
+  if you want to use Event.getAll() ... then uncomment the below
+---------------*/
+// const getAll = require('../controllers/getAll');
+// const getAllWhere = require('../controllers/getAllWhere');
+
+// function assignedGetAll() {
+//   return getAll(this);
+// }
+
+// function assignedGetAllWhere(condition) {
+//   return getAllWhere(this, condition);
+// }
+
+// eventSchema.statics.getAll = assignedGetAll;
+// eventSchema.statics.getAllWhere = assignedGetAllWhere;
+
 module.exports = eventSchema;
