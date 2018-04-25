@@ -15,12 +15,19 @@
     <EmptyRow
       v-else-if="row.type === 'empty'"
       :row="row" />
-    <EventRow
+    <EditingEventRow
+      v-else-if="row.focused && editing"
+      :toggle-editing="toggleEditing"
+      @click="$emit('click')"
+      :row="row" />
+    <FocusedEventRow
       v-else-if="row.focused"
+      :toggle-editing="toggleEditing"
       @click="$emit('click')"
       :row="row" />
     <EventRow
       v-else
+      :toggle-editing="toggleEditing"
       @click="$emit('click')"
       :row="row"/>
   </span>
@@ -31,6 +38,8 @@ import EmptyRow from './EmptyRow';
 import EventRow from './EventRow';
 import ButtonRow from './ButtonRow';
 import AdRow from './AdRow';
+import FocusedEventRow from './FocusedEventRow';
+import EditingEventRow from './EditingEventRow';
 
 export default {
   props: {
@@ -38,12 +47,20 @@ export default {
       type: Object,
       required: true,
     },
+    editing: {
+      type: Boolean,
+    },
+    toggleEditing: {
+      type: Function,
+    },
   },
   components: {
     EventRow,
     ButtonRow,
     AdRow,
     EmptyRow,
+    EditingEventRow,
+    FocusedEventRow,
   },
 };
 </script>

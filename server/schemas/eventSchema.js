@@ -5,7 +5,7 @@ const eventSchema = new Schema({
     type: String,
     hashKey: true,
   },
-  name: {
+  tournamentname: {
     type: String,
   },
   date: {

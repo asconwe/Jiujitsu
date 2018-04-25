@@ -13,7 +13,7 @@
       </div>
     </Header>
     <div class="list-container">
-      <List
+      <List v-if="events.length > 0"
         :events="events"
         :pagination-index="paginationIndex"
         :items-per-page="10"
@@ -23,6 +23,8 @@
         :unset-focused-event="unsetFocusedEvent"
         :focused-event-index="focusedEventIndex"
         :focused="focused"
+        :editing="editing"
+        :toggle-editing="toggleEditing"
         :filter-state="filterState"
         :filter-date="filterDate"
         :sort-by="sortBy"/>
@@ -31,13 +33,15 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 import Landing from './components/Landing';
 import List from './components/List';
 import StateTagContainer from './components/StateTagContainer';
 import DateRangeContainer from './components/DateRangeContainer';
 import Header from './components/Header';
-import events from './data';
 import db from './database/database';
+import { readAllEvents, writeEventsFromChanges, updatedAt, saveUpdateTime } from './database/controller';
 
 export default {
   name: 'App',
@@ -50,7 +54,7 @@ export default {
   },
   data() {
     return {
-      events: events.map((event, index) => ({ ...event, key: index })),
+      events: [],
       paginationIndex: 0,
       sortBy: 'date',
       dateRange: [new Date()],
@@ -60,17 +64,36 @@ export default {
       animating: false,
       focusedEventIndex: undefined,
       focused: false,
+      editing: false,
       scrollTop: 0,
       scrollToInterval: undefined,
       db,
     };
   },
   mounted() {
-    this.db.transaction('rw', 'events', async () => {
-      this.events.forEach((event) => {
-        this.db.events.add(event);
+    // read events from db
+    readAllEvents()
+      .then((events) => {
+        console.log(events);
+        if (events.length === 0) {
+          // API.getAllEvents()
+          saveUpdateTime();
+          return axios.get('/api/changes');
+        }
+        this.events = events;
+        saveUpdateTime();
+        return axios.get(`/api/changes/${updatedAt()}`);
+      })
+      .then((result) => {
+        console.log(result);
+        if (result.data.length > 0) {
+          writeEventsFromChanges(result.data);
+          this.events = this.events.concat(result.data.map(change => change.eventId));
+        }
+      })
+      .catch((err) => {
+        console.log('err:::::', err);
       });
-    });
   },
   beforeDestroy() {
     clearInterval(this.scrollToInterval);
@@ -127,6 +150,9 @@ export default {
     },
     acceptScroll() {
       this.animating = false;
+    },
+    toggleEditing() {
+      this.editing = !this.editing;
     },
   },
 };

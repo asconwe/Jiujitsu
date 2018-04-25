@@ -9,6 +9,8 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
 const portfinder = require('portfinder')
+const SWPrecacheWebpackPlugin = require('sw-precache-webpack-plugin')
+const fs = require('fs');
 
 const HOST = process.env.HOST
 const PORT = process.env.PORT && Number(process.env.PORT)
@@ -55,7 +57,9 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     new HtmlWebpackPlugin({
       filename: 'index.html',
       template: 'index.html',
-      inject: true
+      inject: true,
+      serviceWorkerLoader: `<script>${fs.readFileSync(path.join(__dirname,
+        './service-worker-prod.js'), 'utf-8')}</script>`
     }),
     // copy custom static assets
     new CopyWebpackPlugin([
@@ -64,7 +68,15 @@ const devWebpackConfig = merge(baseWebpackConfig, {
         to: config.dev.assetsSubDirectory,
         ignore: ['.*']
       }
-    ])
+    ]),
+    // service worker caching
+    new SWPrecacheWebpackPlugin({
+      cacheId: 'bjj-cal',
+      filename: 'service-worker.js',
+      staticFileGlobs: ['dist/**/*.{js,html,css}'],
+      minify: true,
+      stripPrefix: 'dist/'
+    })
   ]
 })
 
@@ -85,8 +97,8 @@ module.exports = new Promise((resolve, reject) => {
           messages: [`Your application is running here: http://${devWebpackConfig.devServer.host}:${port}`],
         },
         onErrors: config.dev.notifyOnErrors
-        ? utils.createNotifierCallback()
-        : undefined
+          ? utils.createNotifierCallback()
+          : undefined
       }))
 
       resolve(devWebpackConfig)
