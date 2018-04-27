@@ -1,0 +1,59 @@
+.focused {
+  width: 100%;
+  cursor: auto;
+  min-height: 100px;
+}
+.date.focused-event-info {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  margin-bottom: 0;
+  font-size: 20px;
+}
+.focused-event-info {
+  font-size: 16px;
+  line-height: 20px;
+  margin-bottom: 4px;
+}
+.link.focused-event-info, .edit-button, .submit-suggestion-button {
+  border: solid 1px #556;
+  text-align: center;
+  padding: 4px 12px;
+  margin-bottom: 0;
+  cursor: pointer;
+  background: none;
+  margin-right: 4px;
+  color: white;
+  text-decoration: none;
+  font-size: 16px;
+}
+.link.focused-event-info:hover, .edit-button:hover, .submit-suggestion-button:hover {
+  background: #445;
+}
+.event-link {
+  color: white;
+  text-decoration: none;
+}
+.focused .location {
+  padding-right: 100px;
+}
+.type {
+  margin-bottom: 8px;
+}
+.close-button {
+  cursor: pointer;
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: none;
+  color: white;
+  border: solid 1px #556;
+  border-radius: 50%;
+  padding: 4px;
+  width: 30px;
+  height: 30px;
+}
+
+.close-button:hover {
+  background: #445;
+}

@@ -1,26 +1,28 @@
 <template>
   <div :class="`t-group ${this.direction}`">
     <AnimatedIcon />
-    <transition-group  name="list">
+    <transition-group name="list">
       <RowItem
         class="list-item"
         v-for="row in composedRows"
         :row="row"
-        :key="row.key"
-        @click="handleRowClick(row.key)" />
+        :key="row._id"
+        :editing="editing"
+        :toggle-editing="toggleEditing"
+        @click="handleRowClick(row._id)" />
     </transition-group>
   </div>
 </template>
 
 <script>
-import RowItem from "./RowItem";
-import sort from "../assets/sideEffectFreeSort";
-import AnimatedIcon from "./AnimatedIcon";
+import RowItem from './RowItem';
+import sort from '../assets/sideEffectFreeSort';
+import AnimatedIcon from './AnimatedIcon';
 
 export default {
   components: {
     RowItem,
-    AnimatedIcon
+    AnimatedIcon,
 
   },
   props: {
@@ -30,7 +32,7 @@ export default {
     },
     itemsPerPage: {
       type: Number,
-      default: 5
+      default: 5,
     },
     paginationIndex: {
       type: Number,
@@ -78,18 +80,24 @@ export default {
       type: Number,
     },
     focused: {
-      type: Boolean
+      type: Boolean,
+    },
+    editing: {
+      type: Boolean,
     },
     nextPage: {
-      type: Function
+      type: Function,
     },
     previousPage: {
-      type: Function
-    }
+      type: Function,
+    },
+    toggleEditing: {
+      type: Function,
+    },
   },
   data() {
     return {
-      direction: "left"
+      direction: 'left',
     };
   },
   computed: {
@@ -98,12 +106,11 @@ export default {
     },
     filteredEvents() {
       if (this.focusedEventIndex) {
-        console.log("computing::", this.focusedEventIndex);
         return [
           {
-            ...this.events.find(event => event.key === this.focusedEventIndex),
-            focused: true
-          }
+            ...this.events.find(event => event._id === this.focusedEventIndex),
+            focused: true,
+          },
         ];
       }
       const nameFilteredEvents = this.filterByName(this.events);
@@ -143,14 +150,17 @@ export default {
       return sort(this.filteredEvents, sortMethods[this.sortBy]);
     },
     paginatedEvents() {
+      console.log('--------------------------------');
+      console.log(this.filterByPagination(this.sortedEvents));
+      console.log('--------------------------------');
       return this.filterByPagination(this.sortedEvents);
     },
     composedRows() {
-      //insert ad somewhere in here
+      // insert ad somewhere in here
 
       // if empty
       if (this.paginatedEvents.length === 0) {
-        return [{ type: "empty", key: "empty" }];
+        return [{ type: 'empty', _id: 'empty' }];
       }
       // not empty
       // if not on first page
@@ -163,27 +173,24 @@ export default {
             Math.floor(this.sortedEvents.length / this.itemsPerPage)
           ) {
             return [
-              { type: "previous", key: "previous" },
+              { type: 'previous', _id: 'previous' },
               ...this.paginatedEvents,
-              { type: "next", key: "next" }
+              { type: 'next', _id: 'next' },
             ];
           }
           // on last page
           return [
-            { type: "previous", key: "previous" },
-            ...this.paginatedEvents
+            { type: 'previous', _id: 'previous' },
+            ...this.paginatedEvents,
           ];
         }
         // on first page
-        return [...this.paginatedEvents, { type: "next", key: "next" }];
+        return [...this.paginatedEvents, { type: 'next', _id: 'next' }];
       }
       return [...this.paginatedEvents];
-    }
+    },
   },
   methods: {
-    test() {
-      this.direction = "tap";
-    },
     filterByName(events) {
       if (this.filterName.length > 0) {
         return events.filter(event =>
@@ -246,29 +253,36 @@ export default {
       if (events.length >= this.itemsPerPage) {
         return events.slice(
           this.paginationIndex * this.itemsPerPage,
-          (this.paginationIndex + 1) * this.itemsPerPage
+          (this.paginationIndex + 1) * this.itemsPerPage,
         );
       }
       return events;
     },
-    handleRowClick(key) {
-      if (!isNaN(parseInt(key, 10))) {
-        const index = parseInt(key, 10);
+    handleRowClick(_id) {
+      // If it is an event-row, it has a numeric key
+      if (!isNaN(parseInt(_id, 10))) {
+        const index = parseInt(_id, 10);
         if (this.focusedEventIndex !== index) {
           return this.setFocusedEvent(index);
         }
         return this.unsetFocusedEvent(index);
       }
-      if (key === "next") {
-        this.direction = "left";
+      if (_id === 'next') {
+        this.direction = 'left';
         return this.nextPage();
       }
-      if (key === "previous") {
-        this.direction = "right";
+      if (_id === 'previous') {
+        this.direction = 'right';
         return this.previousPage();
       }
-    }
-  }
+      return null;
+    },
+  },
+  mounted() {
+    console.log('=================================');
+    console.log(this.events);
+    console.log('=================================');
+  },
 };
 </script>
 
@@ -278,27 +292,21 @@ export default {
   display: inline-block;
   width: 100%;
 }
-.left-list-leave-to,
-.right .list-enter {
-  opacity: 0;
-  transform: translateX(-800px);
-}
-.left .list-enter,
-.right .list-leave-to {
-  opacity: 0;
-  transform: translateX(800px);
-}
 .list-enter {
   opacity: 0;
-  transform: translateX(800px);
+  transform: translateX(-200px);
 }
 .list-leave-to {
   opacity: 0;
-  transform: translateX(-800px);
+  transform: translateX(800px);
+}
+.list-enter-active {
+  transition: all 1s;
 }
 .list-leave-active {
+  transform: translateX(300px);
   position: absolute;
-}
+},
 
 .t-group span {
   width: 100%;

@@ -1,0 +1,43 @@
+.event-row {
+  z-index: 1;
+  position: relative;
+  margin-bottom: 15px;
+  margin-right: 0;
+  margin-left: auto;
+  width: 70%;
+  border-radius: 3px;
+  box-shadow: 2px 3px 8px #445;
+  background: #334;
+  color: #cdd;
+  font-size: 14px;
+  font-weight: light;
+  text-align: left;
+  cursor: pointer;
+  padding: 16px;
+  transition: all 0.5s;
+}
+.row-content {
+  position: relative;
+}
+.event-row:hover {
+  box-shadow: 2px 4px 15px #112;
+}
+.event-row:active {
+  transform-style: preserve-3d;
+  box-shadow: 2px 3px 7px #334;
+  transition: box-shadow 0.1s;
+}
+.date {
+  float: left;
+  padding-top: 16px;
+}
+.location {
+  display: block;
+  font-size: 16px;
+  font-weight: bold;
+  line-height: 20px;
+  margin-bottom: 4px;
+}
+.name {
+  padding-bottom: 4px;
+}
