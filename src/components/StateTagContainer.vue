@@ -84,14 +84,6 @@ export default {
   padding: 0 50px 0 0;
 }
 
-@supports (-webkit-overflow-scrolling: touch) {
-  /* CSS specific to iOS devices */
-  .filter-input .tag-input-group {
-    bottom: auto;
-    top: 80px;
-  }
-}
-
 .filter-input .tag-input-group button {
   width: 50px;
   height: 100%;

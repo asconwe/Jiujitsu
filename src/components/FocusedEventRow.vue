@@ -68,4 +68,12 @@ export default {
 };
 </script>
 <style src="../assets/css/row.css" />
+<style scoped>
+@media (max-width: 400px) {
+  .date.focused-event-info {
+    bottom: 40px;
+  }
+}
+</style>
 <style src="../assets/css/row-focused.css" />
+

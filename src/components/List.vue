@@ -1,20 +1,19 @@
 <template>
   <div :class="`t-group ${this.direction}`">
     <AnimatedIcon />
-    <transition-group name="list">
-      <RowItem
-        class="list-item"
-        v-for="row in composedRows"
-        :row="row"
-        :key="row._id"
-        :editing="editing"
-        :toggle-editing="toggleEditing"
-        @click="handleRowClick(row._id)" />
-    </transition-group>
+    <RowItem
+      class="list-item"
+      v-for="row in composedRows"
+      :row="row"
+      :key="row._id"
+      :editing="editing"
+      :toggle-editing="toggleEditing"
+      @click="handleRowClick(row._id)" />
   </div>
 </template>
 
 <script>
+import filterList from './filter-list/filter';
 import RowItem from './RowItem';
 import sort from '../assets/sideEffectFreeSort';
 import AnimatedIcon from './AnimatedIcon';
@@ -23,7 +22,6 @@ export default {
   components: {
     RowItem,
     AnimatedIcon,
-
   },
   props: {
     events: {
@@ -108,18 +106,14 @@ export default {
       if (this.focusedEventIndex) {
         return [
           {
+            // eslint-disable-next-line
             ...this.events.find(event => event._id === this.focusedEventIndex),
             focused: true,
           },
         ];
       }
-      const nameFilteredEvents = this.filterByName(this.events);
-      const stateFilteredEvents = this.filterByState(nameFilteredEvents);
-      const locationFilteredEvents = this.filterByLocation(stateFilteredEvents);
-      const priceFilteredEvents = this.filterByPrice(locationFilteredEvents);
-      const typeFilteredEvents = this.filterByType(priceFilteredEvents);
-      const dateFilteredEvents = this.filterByDate(typeFilteredEvents);
-      return dateFilteredEvents;
+      const filteredEvents = filterList(this.events, [this.filterByState, this.filterByDate]);
+      return filteredEvents;
     },
     sortedEvents() {
       const sortMethods = {
@@ -150,9 +144,6 @@ export default {
       return sort(this.filteredEvents, sortMethods[this.sortBy]);
     },
     paginatedEvents() {
-      console.log('--------------------------------');
-      console.log(this.filterByPagination(this.sortedEvents));
-      console.log('--------------------------------');
       return this.filterByPagination(this.sortedEvents);
     },
     composedRows() {
@@ -191,63 +182,47 @@ export default {
     },
   },
   methods: {
-    filterByName(events) {
+    filterByName(event) {
       if (this.filterName.length > 0) {
-        return events.filter(event =>
-          this.filterName.includes(event.tournamentname),
-        );
+        return this.filterName.includes(event.tournamentname);
       }
-      return events;
+      return true;
     },
-    filterByState(events) {
+    filterByState(event) {
       if (this.filterState.length > 0) {
-        return events.filter(event => this.filterState.includes(event.state));
+        return this.filterState.includes(event.state);
       }
-      return events;
+      return true;
     },
-    filterByLocation(events) {
-      if (this.filterLocation.length > 0) {
-        return events.filter(event =>
-          this.filterLocation.includes(event.location),
-        );
-      }
-      return events;
-    },
-    filterByType(events) {
+    filterByType(event) {
       if (this.filterType.length > 0) {
-        return events.filter(event => this.filterType.includes(event.type));
+        return this.filterType.includes(event.type);
       }
-      return events;
+      return true;
     },
-    filterByPrice(events) {
-      if (this.filterPrice.active) {
-        return events.filter(
-          event =>
-            event.price > this.filterPrice.low &&
-            event.price < this.filterPrice.high,
+    filterByPrice(event) {
+      if (this.filterPrice) {
+        return (
+          event.price > this.filterPrice.low &&
+          event.price < this.filterPrice.high
         );
       }
-      return events;
+      return true;
     },
-    filterByDate(events) {
+    filterByDate(event) {
       if (this.filterDate.length === 1) {
         const filterTime = this.filterDate[0].getTime();
-        return events.filter((event) => {
-          const eventDate = new Date(event.date);
-          return eventDate.getTime() > filterTime;
-        });
+        const eventDate = new Date(event.date);
+        return eventDate.getTime() > filterTime;
       }
       if (this.filterDate.length === 2) {
         const filterTimeStart = this.filterDate[0].getTime();
-        const filterTimeEnd =
-          this.filterDate[1].getTime() + (1000 * 60 * 60 * 24);
-        return events.filter((event) => {
-          const eventDate = new Date(event.date);
-          const eventTime = eventDate.getTime();
-          return eventTime > filterTimeStart && eventTime < filterTimeEnd;
-        });
+        const filterTimeEnd = this.filterDate[1].getTime() + (1000 * 60 * 60 * 24);
+        const eventDate = new Date(event.date);
+        const eventTime = eventDate.getTime();
+        return eventTime > filterTimeStart && eventTime < filterTimeEnd;
       }
-      return events;
+      return true;
     },
     filterByPagination(events) {
       if (events.length >= this.itemsPerPage) {
@@ -278,36 +253,10 @@ export default {
       return null;
     },
   },
-  mounted() {
-    console.log('=================================');
-    console.log(this.events);
-    console.log('=================================');
-  },
 };
 </script>
 
 <style>
-.list-item {
-  transition: all 0.5s;
-  display: inline-block;
-  width: 100%;
-}
-.list-enter {
-  opacity: 0;
-  transform: translateX(-200px);
-}
-.list-leave-to {
-  opacity: 0;
-  transform: translateX(800px);
-}
-.list-enter-active {
-  transition: all 1s;
-}
-.list-leave-active {
-  transform: translateX(300px);
-  position: absolute;
-},
-
 .t-group span {
   width: 100%;
 }

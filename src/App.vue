@@ -74,7 +74,6 @@ export default {
     // read events from db
     readAllEvents()
       .then((events) => {
-        console.log(events);
         if (events.length === 0) {
           // API.getAllEvents()
           saveUpdateTime();
@@ -85,14 +84,18 @@ export default {
         return axios.get(`/api/changes/${updatedAt()}`);
       })
       .then((result) => {
-        console.log(result);
         if (result.data.length > 0) {
           writeEventsFromChanges(result.data);
           this.events = this.events.concat(result.data.map(change => change.eventId));
         }
       })
       .catch((err) => {
-        console.log('err:::::', err);
+        if (err.response && err.response.status) {
+          // eslint-disable-next-line
+          return console.log('Could not connect to the server - using cached data instead', {err})
+        }
+        // eslint-disable-next-line
+        return console.log('Could load local data - connect to the internet to downlaod')
       });
   },
   beforeDestroy() {
@@ -200,6 +203,11 @@ body, html {
   /* CSS specific to iOS devices */
   * {
       cursor: pointer;
+  }
+
+  #app {
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
   }
 }
 

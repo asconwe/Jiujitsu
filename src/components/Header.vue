@@ -143,12 +143,18 @@ export default {
 
 @media only screen and (max-width: 433px) {
   .site-title {
+    padding-top: 3px;
     font-size: 25px;
   }
 }
 @media only screen and (max-width: 373px) {
   .site-title {
     font-size: 20px;
+  }
+}
+@supports (-webkit-overflow-scrolling: touch) {
+  .header.filters-open {
+    overflow: visible;
   }
 }
 </style>
