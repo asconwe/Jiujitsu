@@ -12,7 +12,7 @@ const insertStarterDataRecursively = (list, index = 0) => {
         insertStarterDataRecursively(list, index + 1);
       })
       // eslint-disable-next-line no-console
-      .catch(err => console.log(err));
+      .catch(err => console.log('error:::', err));
   }
   // eslint-disable-next-line no-console
   console.log('Finished populating');

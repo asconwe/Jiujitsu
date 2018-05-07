@@ -1,4 +1,4 @@
-// require('dotenv').config({ path: '../.env' });
+require('dotenv').config();
 const dynamoose = require('dynamoose');
 const express = require('express');
 const bodyParser = require('body-parser');
@@ -20,6 +20,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 const routes = require('./routes/api');
 
 routes(app);
+
+app.use(express.static('dist'));
 
 const PORT = process.env.PORT || 3000;
 
